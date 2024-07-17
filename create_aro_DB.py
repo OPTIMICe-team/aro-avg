@@ -230,7 +230,9 @@ def _average_one_particle(ds, ssd):
                     ZL = S2Z(*SL.flatten())
                     
                     ZLt += ZL/(Ngamma*Nalpha)
-                    
+                    HH = 2*np.pi*(ZLt[0,0] - ZLt[0,1] - ZLt[1,0] + ZLt[1,1])
+                    VV = 2*np.pi*(ZLt[0,0] + ZLt[0,1] + ZLt[1,0] + ZLt[1,1])
+                  
                     # Do forward
                     L2P = lab2partRF(th0L, th0L, ph0L, ph0L, alp, beta, gam)
                     th0P, th1P, ph0P, ph1P, Rho, invRho = L2P
@@ -238,12 +240,10 @@ def _average_one_particle(ds, ssd):
                     S2f = (Sd.S2fr + 1.0j*Sd.S2fi).values
                     S3f = (Sd.S3fr + 1.0j*Sd.S3fi).values
                     S4f = (Sd.S4fr + 1.0j*Sd.S4fi).values
-                    SPf = np.array([[S1, S4], [S3, S2]])
+                    SPf = np.array([[S1f, S4f], [S3f, S2f]])
                     SLf = invRho.dot(SPf).dot(Rho)
                     SLt += SLf/(Ngamma*Nalpha)
-                    HH = 2*np.pi*(ZLt[0,0] - ZLt[0,1] - ZLt[1,0] + ZLt[1,1])
-                    VV = 2*np.pi*(ZLt[0,0] + ZLt[0,1] + ZLt[1,0] + ZLt[1,1])
-                    #print('Zdr = dda {0:3.3f}'.format(dB(HH/VV)))
+                    
                     ds.Zdr.loc[freq, el, beta] = dB(HH/VV)
                     ds.Z11.loc[freq, el, beta] = ZLt[0, 0]
                     ds.Z12.loc[freq, el, beta] = ZLt[0, 1]
